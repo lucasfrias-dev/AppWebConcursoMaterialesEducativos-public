@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Panel del Jurado Evaluador — UNNOBA')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <span class="badge badge-primary" style="margin-bottom: 0.4rem;">Comité Evaluador</span>
+            <h1 class="page-title" th:text="'Bienvenido, ' + ${#authentication.name}">Bienvenido Evaluador</h1>
+            <p class="page-subtitle">Panel de gestión y calificación de materiales pedagógicos asignados</p>
+        </div>
+        <div>
+            <a th:href="@{/evaluador/profile}" class="btn btn-outline btn-sm">Mi Perfil</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <!-- Banner de materiales pendientes -->
+    <div th:if="${materialesPendientes != null and materialesPendientes.size() > 0}" class="alert alert-warning" role="alert" style="align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="flex: 1;">
+            <strong>Materiales pendientes de evaluación:</strong>
+            <ul style="margin-top: 0.35rem; margin-left: 1.25rem; font-size: 0.82rem;">
+                <li th:each="mat : ${materialesPendientes}">
+                    <span style="font-weight: 500;" th:text="${mat.titulo}">Título</span> — <span th:text="${mat.disciplina}">Disciplina</span>
+                </li>
+            </ul>
+        </div>
+        <a th:href="@{/evaluador/materiales/asignados}" class="btn btn-sm btn-primary" style="align-self: center; white-space: nowrap;">
+            Evaluar Ahora
+        </a>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Materiales a Evaluar -->
+        <div class="dashboard-card">
+            <div>
+                <h3 style="font-size: 1.05rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.35rem;">Materiales Asignados</h3>
+                <p style="color: var(--gray-600); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Acceda a las propuestas curriculares asignadas para su análisis pedagógico, rúbrica de calificación y dictamen.
+                </p>
+            </div>
+            <div>
+                <a th:href="@{/evaluador/materiales/asignados}" class="btn btn-primary" style="width: 100%;">
+                    Ver Materiales Asignados
+                </a>
+            </div>
+        </div>
+
+        <!-- Mi Perfil de Evaluador -->
+        <div class="dashboard-card">
+            <div>
+                <h3 style="font-size: 1.05rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.35rem;">Perfil de Jurado</h3>
+                <p style="color: var(--gray-600); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Verifique sus datos personales de contacto, departamento académico y credenciales de acceso institucional.
+                </p>
+            </div>
+            <div>
+                <a th:href="@{/evaluador/profile}" class="btn btn-outline" style="width: 100%;">
+                    Gestionar Perfil
+                </a>
+            </div>
+        </div>
+
+        <!-- Galería de Materiales -->
+        <div class="dashboard-card">
+            <div>
+                <h3 style="font-size: 1.05rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.35rem;">Galería General</h3>
+                <p style="color: var(--gray-600); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Consulte el conjunto de materiales educativos participantes en la presente y anteriores convocatorias.
+                </p>
+            </div>
+            <div>
+                <a th:href="@{/}" class="btn btn-outline" style="width: 100%;">
+                    Ir a la Portada
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

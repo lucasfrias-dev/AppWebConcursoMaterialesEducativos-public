@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Componente Reutilizable: Estado Vacío (Empty State)
+  Parámetros:
+  - title: Título del estado vacío
+  - message: Mensaje explicativo
+  - actionUrl: URL opcional para botón de acción
+  - actionText: Texto del botón de acción
+-->
+<div th:fragment="emptyState(title, message, actionUrl, actionText)" class="page-card" style="text-align: center; padding: 3rem 1.5rem;">
+    <h2 style="font-size: 1.15rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.35rem;" th:text="${title}">No hay elementos</h2>
+    <p style="color: var(--gray-500); font-size: 0.88rem; max-width: 440px; margin: 0 auto 1.25rem;" th:text="${message}">No se encontraron registros disponibles.</p>
+    <a th:if="${actionUrl != null and actionText != null}" th:href="@{${actionUrl}}" class="btn btn-outline btn-sm" th:text="${actionText}">Volver</a>
+</div>
+
+</body>
+</html>

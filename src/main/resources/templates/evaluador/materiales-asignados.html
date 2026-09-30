@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Materiales Asignados — Evaluador')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/evaluador/index', 'Panel Evaluador', 'Materiales Asignados')}"></nav>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Materiales Asignados para Evaluación</h1>
+            <p class="page-subtitle">Listado de propuestas pedagógicas asignadas a su perfil docente</p>
+        </div>
+        <div>
+            <a th:href="@{/evaluador/index}" class="btn btn-outline btn-sm">&larr; Panel</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div th:if="${materiales != null and materiales.size() > 0}" class="materials-grid">
+        <div th:each="material, iterStat : ${materiales}" class="material-card">
+            <div class="material-preview-wrapper">
+                <div style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+                    <span th:if="${hasUserEvaluated[iterStat.index]}" class="badge badge-success">Evaluado</span>
+                    <span th:unless="${hasUserEvaluated[iterStat.index]}" class="badge badge-warning">Pendiente</span>
+                </div>
+                <img th:src="@{'/materiales-participantes/' + ${material.id} + '/preview'}" 
+                     th:alt="'Portada de ' + ${material.titulo}" 
+                     class="material-preview-img"
+                     loading="lazy"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: var(--gray-100); color: var(--gray-500); font-size: 0.8rem;">
+                    Vista previa no disponible
+                </div>
+            </div>
+
+            <div class="material-body">
+                <div class="badge-group">
+                    <span class="badge badge-primary" th:text="${material.tipoMaterial}">Tipo</span>
+                    <span class="badge badge-default" th:text="${material.disciplina}">Disciplina</span>
+                </div>
+
+                <h2 class="material-title" th:text="${material.titulo}">Título del material</h2>
+                <p class="material-desc" th:text="${material.descripcion}">Descripción del material a evaluar.</p>
+
+                <div style="font-size: 0.8rem; color: var(--gray-500); margin-bottom: 0.85rem;">
+                    <span th:if="${material.concurso != null}">
+                        Edición: <strong th:text="${material.concurso.edicion}"></strong>
+                    </span>
+                </div>
+
+                <div class="material-footer">
+                    <a th:href="@{'/evaluador/materiales/' + ${material.id} + '/evaluar'}" class="btn btn-primary btn-sm" style="width: 100%;">
+                        <span th:text="${hasUserEvaluated[iterStat.index] ? 'Ver / Modificar Dictamen' : 'Calificar Propuesta'}">Calificar</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:if="${materiales == null or #lists.isEmpty(materiales)}">
+        <div th:replace="~{fragments/empty-state :: emptyState('No posee materiales asignados', 'Actualmente la coordinación del concurso no le ha asignado propuestas para su evaluación.', '/evaluador/index', 'Volver al Panel')}"></div>
+    </th:block>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Catálogo de Materiales — ' + (${edicion != null ? edicion : 'CED'}) + ' — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/index', 'Administración', 'Catálogo ' + (${edicion != null ? edicion : 'Materiales'}))}"></nav>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Todos los Materiales</h1>
+            <p class="page-subtitle" th:text="'Catálogo completo de propuestas ' + (${edicion != null} ? 'para la ' + ${edicion} : '')"></p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a th:if="${edicion != null}" th:href="@{'/materiales-ganadores/' + ${#strings.replace(edicion, ' ', '-')}}" class="btn btn-outline btn-sm">
+                &#9733; Ver Ganadores
+            </a>
+            <a th:href="@{/administrador/index}" class="btn btn-outline btn-sm">&larr; Panel</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div th:if="${materiales != null and materiales.size() > 0}" class="materials-grid">
+        <th:block th:each="material : ${materiales}">
+            <article th:replace="~{fragments/material-card :: card(material=${material}, actionUrl=@{'/administrador/materiales/' + ${#strings.replace(edicion != null ? edicion : '', ' ', '-')} + '/' + ${material.id}}, actionText='Ver Ficha Completa &rarr;')}"></article>
+        </th:block>
+    </div>
+
+    <th:block th:if="${materiales == null or #lists.isEmpty(materiales)}">
+        <div th:replace="~{fragments/empty-state :: emptyState('No se encontraron materiales', 'Aún no existen materiales educativos registrados para esta edición del certamen.', '/administrador/index', 'Volver al Panel')}"></div>
+    </th:block>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

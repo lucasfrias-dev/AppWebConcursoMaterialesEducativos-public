@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Administradores Registrados — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/index', 'Administración', 'Administradores Registrados')}"></nav>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Administradores Registrados</h1>
+            <p class="page-subtitle">Listado de usuarios institucionales con privilegios de gestión global</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <a th:href="@{/administrador/register/admin}" class="btn btn-primary btn-sm">+ Registrar Admin</a>
+            <a th:href="@{/administrador/index}" class="btn btn-outline btn-sm">&larr; Panel</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="page-card" style="padding: 0; overflow: hidden;">
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 80px;">ID</th>
+                    <th>Nombre Completo</th>
+                    <th>Correo Electrónico</th>
+                    <th style="width: 140px;">Rol</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="admin : ${administradores}">
+                    <td th:text="${admin.id}" style="color: var(--gray-500); font-weight: 500;"></td>
+                    <td>
+                        <strong style="color: var(--gray-900);" th:text="${admin.nombre + ' ' + admin.apellido}"></strong>
+                    </td>
+                    <td th:text="${admin.email}"></td>
+                    <td>
+                        <span class="badge badge-primary">ADMINISTRADOR</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

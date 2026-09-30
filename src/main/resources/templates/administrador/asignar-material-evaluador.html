@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Asignar Material a Evaluador — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div style="max-width: 620px; margin: 0 auto;">
+        <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/index', 'Administración', 'Asignar Material')}"></nav>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Asignar Material a Evaluador</h1>
+                <p class="page-subtitle">Vincula una propuesta con un miembro del jurado para su calificación académica</p>
+            </div>
+            <div>
+                <a th:href="@{/administrador/index}" class="btn btn-outline btn-sm">&larr; Panel</a>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <div class="page-card">
+            <form id="assignForm" th:action="@{/administrador/evaluadores/asignar-material}" method="post">
+                <div class="form-group">
+                    <label for="materialId" class="form-label">Seleccionar Material Educativo <span class="required-mark" aria-hidden="true">*</span></label>
+                    <select id="materialId" name="materialId" class="form-control" required>
+                        <option value="" disabled selected>-- Elige un material aprobado --</option>
+                        <option th:each="material : ${materiales}" th:value="${material.id}" th:text="${material.titulo} + ' (' + ${material.disciplina} + ')'"></option>
+                    </select>
+                    <span class="form-text">Solo se listan propuestas aprobadas para el certamen.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="evaluatorId" class="form-label">Seleccionar Miembro del Jurado <span class="required-mark" aria-hidden="true">*</span></label>
+                    <select id="evaluatorId" name="evaluatorId" class="form-control" required>
+                        <option value="" disabled selected>-- Elige un evaluador registrado --</option>
+                        <option th:each="user : ${evaluadores}" th:value="${user.id}" th:text="${user.nombre + ' ' + user.apellido + ' (' + user.email + ')'}"></option>
+                    </select>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <a th:href="@{/administrador/index}" class="btn btn-outline">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        Confirmar Asignación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Registro de Docente Concursante — UNNOBA')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="auth-container">
+    <div class="auth-card-lg">
+        <div class="auth-header">
+            <h1 class="page-title" style="font-size: 1.35rem;">Registro de Concursante</h1>
+            <p class="page-subtitle">Complete sus datos para postular materiales educativos</p>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <form th:action="@{/participar}" th:object="${user}" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" id="nombre" th:field="*{nombre}" class="form-control" placeholder="Nombre" required>
+                    <div class="error-text" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="apellido" class="form-label">Apellido</label>
+                    <input type="text" id="apellido" th:field="*{apellido}" class="form-control" placeholder="Apellido" required>
+                    <div class="error-text" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Correo electrónico</label>
+                <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="usuario@correo.com" required>
+                <div class="error-text" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="Mínimo 8 caracteres" required>
+                <div class="error-text" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="passwordConfirm" class="form-label">Confirmar contraseña</label>
+                <input type="password" id="passwordConfirm" th:field="*{passwordConfirm}" class="form-control" placeholder="Repita la contraseña" required>
+                <div class="error-text" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+                Registrar cuenta
+            </button>
+        </form>
+
+        <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem; text-align: center;">
+            <p style="font-size: 0.82rem; color: var(--gray-600);">
+                ¿Ya dispone de una cuenta?
+                <a th:href="@{/login}" style="font-weight: 500;">Iniciar sesión</a>
+            </p>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

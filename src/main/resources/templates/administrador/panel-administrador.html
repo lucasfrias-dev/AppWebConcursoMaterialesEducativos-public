@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Panel de Administración — UNNOBA')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <span class="badge badge-primary" style="margin-bottom: 0.4rem;">Panel de Administración</span>
+            <h1 class="page-title">Gestión General</h1>
+            <p class="page-subtitle">Administración de convocatorias, postulaciones y comités evaluadores</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <a th:href="@{/administrador/profile}" class="btn btn-outline btn-sm">Mi Perfil</a>
+            <a th:href="@{/administrador/usuarios/all}" class="btn btn-outline btn-sm">Usuarios</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <!-- Concurso Actual Activo -->
+    <div th:if="${concursoActual != null}" class="page-card" style="border-left: 3px solid var(--unnoba-blue); margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span class="badge badge-success" style="margin-bottom: 0.35rem;">Convocatoria Activa</span>
+                <h2 style="font-size: 1.35rem; font-weight: 600; color: var(--gray-900);" th:text="${concursoActual.edicion}">Edición Activa</h2>
+                <p style="color: var(--gray-600); font-size: 0.85rem; margin-top: 0.2rem;">
+                    Concurso en curso. Puede administrar cronogramas, materiales postulados y asignación de comités.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a th:href="@{'/administrador/concurso/' + ${#strings.replace(concursoActual.edicion, ' ', '-')}}" class="btn btn-outline btn-sm">
+                    Cronograma de Fechas
+                </a>
+                <button type="button" class="btn btn-danger btn-sm" onclick="abrirModalCierre();">
+                    Cerrar Concurso
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Si no hay concurso activo -->
+    <div th:if="${concursoActual == null}" class="alert alert-info" role="alert" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <span>No se registra ninguna edición activa en este momento.</span>
+        <a th:href="@{/administrador/new-concurso}" class="btn btn-primary btn-sm">
+            Crear Nueva Edición
+        </a>
+    </div>
+
+    <!-- Secciones de Administración -->
+    <div class="admin-grid">
+
+        <!-- Gestión de Materiales -->
+        <div class="admin-card" th:if="${concursoActual != null}">
+            <div>
+                <h3 style="font-size: 1.05rem; font-weight: 600; color: var(--gray-900);">
+                    Materiales de la Convocatoria
+                </h3>
+                <p style="color: var(--gray-500); font-size: 0.8rem; margin-top: 0.2rem;">
+                    Revisión de postulaciones, asignación de jurados y catálogo.
+                </p>
+
+                <ul class="admin-action-list">
+                    <li class="admin-action-item">
+                        <a th:href="@{'/administrador/materiales/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/pendientes-de-aprobacion'}">
+                            <span>Pendientes de Aprobación</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </li>
+                    <li class="admin-action-item">
+                        <a th:href="@{/administrador/evaluadores/asignar-material}">
+                            <span>Asignar a Evaluador</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </li>
+                    <li class="admin-action-item">
+                        <a th:href="@{'/administrador/materiales/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/pendientes-de-evaluacion'}">
+                            <span>Pendientes de Evaluación</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </li>
+                    <li class="admin-action-item">
+                        <a th:href="@{'/administrador/materiales/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/participantes'}">
+                            <span>Materiales Participantes</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </li>
+                    <li class="admin-action-item">
+                        <a th:href="@{'/administrador/materiales/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/all'}">
+                            <span>Listado Completo</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Gestión de Usuarios -->
+        <div class="admin-card">
+            <div>
+                <h3 style="font-size: 1.05rem; font-weight: 600; color: var(--gray-900);">
+                    Usuarios y Comités
+                </h3>
+                <p style="color: var(--gray-500); font-size: 0.8rem; margin-top: 0.2rem;">
+                    Registro y estado de administradores, evaluadores y concursantes.
+                </p>
+
+                <ul class="admin-action-list">
+                    <li class="admin-action-item">
+                        <a th:href="@{/administrador/usuarios/all}">
+                            <span>Directorio de Usuarios</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </li>
+                    <li class="admin-action-item">
+                        <a th:href="@{/administrador/register/evaluador}">
+                            <span>Registrar Evaluador</span>
+                            <span>+</span>
+                        </a>
+                    </li>
+                    <li class="admin-action-item">
+                        <a th:href="@{/administrador/register/admin}">
+                            <span>Registrar Administrador</span>
+                            <span>+</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Historial de Concursos -->
+        <div class="admin-card" th:if="${concursosFinalizados != null and concursosFinalizados.size() > 0}">
+            <div>
+                <h3 style="font-size: 1.05rem; font-weight: 600; color: var(--gray-900);">
+                    Concursos Finalizados
+                </h3>
+                <p style="color: var(--gray-500); font-size: 0.8rem; margin-top: 0.2rem;">
+                    Historial de ediciones anteriores y materiales ganadores.
+                </p>
+
+                <ul class="admin-action-list">
+                    <li class="admin-action-item" th:each="c : ${concursosFinalizados}">
+                        <a th:href="@{'/administrador/concurso/' + ${#strings.replace(c.edicion, ' ', '-')}}">
+                            <span th:text="${c.edicion}">Edición</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Modal: Confirmar Cierre de Concurso -->
+<div id="modalCierre" class="modal-backdrop" onclick="cerrarModalCierre(event)">
+    <div class="modal-dialog" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 style="font-size: 1.05rem; font-weight: 600; color: var(--gray-900);">Confirmar Cierre de Concurso</h3>
+            <button type="button" class="alert-close" onclick="cerrarModalCierre()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>¿Está seguro de que desea cerrar la edición actual del concurso? La fecha de cierre se establecerá al momento presente y finalizará el período de votación.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline btn-sm" onclick="cerrarModalCierre()">Cancelar</button>
+            <form th:if="${concursoActual != null}" th:action="@{'/administrador/concurso/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/cerrar'}" method="post" style="display: inline; margin: 0;">
+                <button type="submit" class="btn btn-danger btn-sm">Confirmar Cierre</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script>
+    function abrirModalCierre() {
+        document.getElementById('modalCierre').style.display = 'flex';
+    }
+    function cerrarModalCierre(e) {
+        if (!e || e.target.id === 'modalCierre' || e.target.classList.contains('alert-close') || e.target.tagName === 'BUTTON') {
+            document.getElementById('modalCierre').style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

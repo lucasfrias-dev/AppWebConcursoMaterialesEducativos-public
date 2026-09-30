@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Materiales Pendientes de Calificación — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/index', 'Administración', 'Pendientes de Calificación')}"></nav>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Materiales Pendientes de Calificación</h1>
+            <p class="page-subtitle">Monitoreo de evaluaciones emitidas y evaluadores con calificaciones pendientes</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <a th:href="@{/administrador/evaluadores/asignar-material}" class="btn btn-primary btn-sm">+ Asignar Evaluador</a>
+            <a th:href="@{/administrador/index}" class="btn btn-outline btn-sm">&larr; Panel</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div th:if="${materiales != null and materiales.size() > 0}" class="materials-grid">
+        <div th:each="material : ${materiales}" class="material-card">
+            <div class="material-preview-wrapper">
+                <div style="position: absolute; top: 12px; right: 12px; z-index: 10;">
+                    <span class="badge badge-warning">Calificación Pendiente</span>
+                </div>
+                <img th:src="@{'/materiales-participantes/' + ${material.id} + '/preview'}" 
+                     th:alt="'Portada de ' + ${material.titulo}" 
+                     class="material-preview-img"
+                     loading="lazy"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: var(--gray-100); color: var(--gray-500); font-size: 0.85rem;">
+                    Vista previa no disponible
+                </div>
+            </div>
+
+            <div class="material-body">
+                <div class="badge-group">
+                    <span class="badge badge-primary" th:text="${material.tipoMaterial}">Tipo</span>
+                    <span class="badge badge-default" th:text="${material.disciplina}">Disciplina</span>
+                </div>
+
+                <h2 class="material-title" th:text="${material.titulo}">Título del material</h2>
+                <p class="material-desc" th:text="${material.descripcion}">Descripción del material.</p>
+
+                <!-- Estado de Evaluadores Asignados -->
+                <div style="background: var(--gray-50); border-radius: var(--radius-md); padding: 0.75rem; margin-bottom: 1rem; border: 1px solid var(--border-color); font-size: 0.82rem;">
+                    <div style="font-weight: 600; color: var(--gray-900); margin-bottom: 0.35rem;">Jurados Asignados:</div>
+                    <ul th:if="${material.evaluadores != null and material.evaluadores.size() > 0}" style="margin-left: 1.25rem; color: var(--gray-600); display: flex; flex-direction: column; gap: 0.2rem;">
+                        <li th:each="evaluador : ${material.evaluadores}">
+                            <span th:text="${evaluador.nombre + ' ' + evaluador.apellido}"></span>
+                        </li>
+                    </ul>
+                    <span th:unless="${material.evaluadores != null and material.evaluadores.size() > 0}" style="color: var(--danger-text); font-style: italic;">
+                        Sin jurado asignado aún
+                    </span>
+
+                    <div style="font-weight: 600; color: var(--gray-900); margin-top: 0.6rem; margin-bottom: 0.35rem;">Pendientes de emitir dictamen:</div>
+                    <ul th:if="${evaluadoresPendientes != null and evaluadoresPendientes.get(material) != null and evaluadoresPendientes.get(material).size() > 0}" style="margin-left: 1.25rem; color: #b45309; display: flex; flex-direction: column; gap: 0.2rem;">
+                        <li th:each="evaluador : ${evaluadoresPendientes.get(material)}">
+                            <span th:text="${evaluador.nombre + ' ' + evaluador.apellido}"></span>
+                        </li>
+                    </ul>
+                    <span th:unless="${evaluadoresPendientes != null and evaluadoresPendientes.get(material) != null and evaluadoresPendientes.get(material).size() > 0}" style="color: var(--gray-500); font-style: italic;">
+                        Todas las evaluaciones han sido completadas
+                    </span>
+                </div>
+
+                <div class="material-footer" style="flex-direction: column; gap: 0.5rem; align-items: stretch;">
+                    <a th:href="@{'/administrador/materiales/' + ${#strings.replace(material.concurso != null ? material.concurso.edicion : (edicion != null ? edicion : 'III-Edicion'), ' ', '-')} + '/' + ${material.id}}" class="btn btn-outline btn-sm" style="width: 100%;">
+                        Ver Ficha Completa
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:if="${materiales == null or #lists.isEmpty(materiales)}">
+        <div th:replace="~{fragments/empty-state :: emptyState('Todo al día', 'No hay materiales con evaluaciones pendientes en este momento.', '/administrador/index', 'Volver al Panel')}"></div>
+    </th:block>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

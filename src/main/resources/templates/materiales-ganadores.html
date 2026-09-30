@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Materiales Ganadores — ' + ${edicion})}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/', 'Inicio', 'Materiales Ganadores')}"></nav>
+
+    <div class="page-header">
+        <div>
+            <span class="badge badge-gold" style="margin-bottom: 0.4rem;">Reconocimientos</span>
+            <h1 class="page-title">Materiales Ganadores</h1>
+            <p class="page-subtitle" th:text="'Trabajos premiados en la ' + ${edicion}"></p>
+        </div>
+        <div>
+            <a th:href="@{/}" class="btn btn-outline btn-sm">&larr; Volver al inicio</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div th:if="${materialesGanadores != null and materialesGanadores.size() > 0}" class="materials-grid">
+        <th:block th:each="material : ${materialesGanadores}">
+            <article th:replace="~{fragments/material-card :: card(${material}, '/materiales-participantes/' + ${#strings.replace(edicion, ' ', '-')} + '/' + ${material.id}, 'Ver Detalles')}"></article>
+        </th:block>
+    </div>
+
+    <th:block th:if="${materialesGanadores == null or #lists.isEmpty(materialesGanadores)}">
+        <div th:replace="~{fragments/empty-state :: emptyState('Aún no se han proclamado ganadores', 'La selección final y deliberación del jurado evaluador se comunicará al concluir el período de evaluación.', '/', 'Volver al inicio')}"></div>
+    </th:block>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

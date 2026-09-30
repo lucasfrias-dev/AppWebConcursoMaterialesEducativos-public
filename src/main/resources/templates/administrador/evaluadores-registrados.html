@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Evaluadores Registrados — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/index', 'Administración', 'Jurados Registrados')}"></nav>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Evaluadores Registrados</h1>
+            <p class="page-subtitle">Miembros del comité académico evaluador habilitados para calificar postulaciones</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <a th:href="@{/administrador/register/evaluador}" class="btn btn-primary btn-sm">+ Registrar Evaluador</a>
+            <a th:href="@{/administrador/evaluadores/asignar-material}" class="btn btn-outline btn-sm">Asignar Material</a>
+            <a th:href="@{/administrador/index}" class="btn btn-outline btn-sm">&larr; Panel</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="page-card" style="padding: 0; overflow: hidden;">
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 80px;">ID</th>
+                    <th>Nombre Completo</th>
+                    <th>Correo Electrónico</th>
+                    <th style="width: 140px;">Rol</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="evaluador : ${evaluadores}">
+                    <td th:text="${evaluador.id}" style="color: var(--gray-500); font-weight: 500;"></td>
+                    <td>
+                        <strong style="color: var(--gray-900);" th:text="${evaluador.nombre + ' ' + evaluador.apellido}"></strong>
+                    </td>
+                    <td th:text="${evaluador.email}"></td>
+                    <td>
+                        <span class="badge badge-warning">EVALUADOR</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

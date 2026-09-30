@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head((${material != null ? material.titulo : 'Material'}) + ' — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/materiales/' + ${#strings.replace(edicion != null ? edicion : (material.concurso != null ? material.concurso.edicion : 'III-Edicion'), ' ', '-')} + '/all', 'Catálogo ' + (${edicion != null ? edicion : (material.concurso != null ? material.concurso.edicion : '')}), ${material.titulo})}"></nav>
+
+    <div class="page-header">
+        <div>
+            <div class="badge-group" style="margin-bottom: 0.5rem;">
+                <span class="badge badge-primary" th:text="${material.tipoMaterial}">Tipo</span>
+                <span class="badge badge-default" th:text="${material.disciplina}">Disciplina</span>
+                <span th:if="${material.aprobado == true}" class="badge badge-success">&#10003; Aprobado</span>
+                <span th:if="${material.aprobado == false}" class="badge badge-danger">&#10007; Rechazado</span>
+                <span th:if="${material.aprobado == null}" class="badge badge-warning">Pendiente Aprobación</span>
+            </div>
+            <h1 class="page-title" th:text="${material.titulo}">Título del Material</h1>
+            <p class="page-subtitle" th:text="'Autores: ' + ${material.autores}"></p>
+        </div>
+        <div>
+            <a th:href="@{'/administrador/materiales/' + ${#strings.replace(edicion != null ? edicion : (material.concurso != null ? material.concurso.edicion : 'III-Edicion'), ' ', '-')} + '/all'}" class="btn btn-outline btn-sm">
+                &larr; Volver al catálogo
+            </a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div style="display: grid; grid-template-columns: 1fr 360px; gap: 2rem; align-items: start;">
+        <div>
+            <!-- Resumen y Visor -->
+            <div class="page-card" style="margin-bottom: 1.5rem;">
+                <h2 style="font-size: 1.2rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.75rem;">Descripción de la Propuesta</h2>
+                <p style="color: var(--gray-600); line-height: 1.7; font-size: 0.95rem; white-space: pre-line;" th:text="${material.descripcion}">
+                    Descripción
+                </p>
+
+                <!-- Video player when YouTube or Vimeo -->
+                <div id="videoContainer" style="display: none; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius-md); background: #000; margin-top: 1.25rem; margin-bottom: 0.5rem;">
+                    <iframe id="videoPlayer" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+                    <a th:href="@{'/view/' + ${material.id}}" target="_blank" class="btn btn-primary">
+                        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        Abrir Documento PDF
+                    </a>
+
+                    <a th:href="@{'/download/' + ${material.id}}" class="btn btn-outline">
+                        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Descargar Archivo
+                    </a>
+
+                    <a th:if="${material.urlVideoPresentacion != null and !#strings.isEmpty(material.urlVideoPresentacion)}" 
+                       th:href="${(material.urlVideoPresentacion.startsWith('http://') or material.urlVideoPresentacion.startsWith('https://')) ? material.urlVideoPresentacion : 'https://' + material.urlVideoPresentacion}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                        Ver Video &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <!-- Evaluaciones Registradas -->
+            <div class="page-card">
+                <h3 style="font-size: 1.15rem; font-weight: 600; color: var(--gray-900); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg style="width: 20px; height: 20px; color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                    Evaluaciones del Comité Jurado
+                </h3>
+
+                <div th:if="${!#lists.isEmpty(evaluaciones)}" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div th:each="evaluacion : ${evaluaciones}" style="background: var(--gray-50); border-radius: var(--radius-md); padding: 1.25rem; border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+                            <strong th:text="${evaluacion.evaluador.nombre + ' ' + evaluacion.evaluador.apellido}" style="color: var(--gray-900);">Evaluador</strong>
+                            <div style="display: flex; align-items: baseline; gap: 0.25rem;">
+                                <span style="font-size: 1.35rem; font-weight: 700; color: var(--primary);" th:text="${evaluacion.nota}">0</span>
+                                <span style="font-size: 0.85rem; color: var(--gray-500);">/ 10</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--gray-700); font-size: 0.92rem; line-height: 1.5; white-space: pre-line;" th:text="${evaluacion.comentario}"></p>
+                    </div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(evaluaciones)}" style="padding: 1.5rem; text-align: center; color: var(--gray-500); background: var(--gray-50); border-radius: var(--radius-md); font-size: 0.92rem;">
+                    Aún no se han registrado evaluaciones formales para este material.
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <!-- Ficha Técnica -->
+            <div class="page-card" style="margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--gray-900); margin-bottom: 1rem;">Ficha y Estado</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem;">
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);">
+                        <span style="color: var(--gray-500);">Votos del público</span>
+                        <strong style="color: var(--gray-900);"><span th:text="${material.likes}">0</span> votos</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);">
+                        <span style="color: var(--gray-500);">Evaluado completo</span>
+                        <strong style="color: var(--gray-900);" th:text="${material.evaluado ? 'Sí' : 'No'}"></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--gray-500);">Condición</span>
+                        <span th:if="${material.ganador}" class="badge badge-gold">&#9733; Ganador</span>
+                        <span th:unless="${material.ganador}" class="badge badge-outline">Participante</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jurado Asignado -->
+            <div class="page-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--gray-900);">Jurados Asignados</h3>
+                    <a th:href="@{/administrador/evaluadores/asignar-material}" class="btn btn-primary btn-sm" style="font-size: 0.78rem; padding: 0.3rem 0.6rem;">
+                        + Asignar
+                    </a>
+                </div>
+
+                <ul th:if="${evaluadores != null and !evaluadores.empty}" style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <li th:each="evaluador : ${evaluadores}" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; padding: 0.4rem 0.6rem; background: var(--gray-50); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <svg style="width: 16px; height: 16px; color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span style="color: var(--gray-800); font-weight: 500;" th:text="${evaluador.nombre + ' ' + evaluador.apellido}"></span>
+                    </li>
+                </ul>
+
+                <p th:if="${evaluadores == null or evaluadores.empty}" style="font-size: 0.88rem; color: var(--gray-500); font-style: italic;">
+                    No se han asignado evaluadores aún.
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script th:inline="javascript">
+    (function() {
+        var rawUrl = /*[[${material.urlVideoPresentacion}]]*/ '';
+        if (!rawUrl) return;
+        var embedUrl = null;
+        var ytMatch = rawUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+        if (ytMatch && ytMatch[1]) {
+            embedUrl = 'https://www.youtube.com/embed/' + ytMatch[1];
+        } else {
+            var vimeoMatch = rawUrl.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)/);
+            if (vimeoMatch && vimeoMatch[3]) {
+                embedUrl = 'https://player.vimeo.com/video/' + vimeoMatch[3];
+            }
+        }
+        var iframe = document.getElementById('videoPlayer');
+        var container = document.getElementById('videoContainer');
+        if (embedUrl && iframe && container) {
+            iframe.src = embedUrl;
+            container.style.display = 'block';
+        }
+    })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Componente Breadcrumbs accesible
+  Parámetros:
+  - parentUrl: URL del nivel anterior
+  - parentTitle: Título del nivel anterior
+  - currentTitle: Título de la página actual
+-->
+<nav th:fragment="breadcrumbs(parentUrl, parentTitle, currentTitle)" aria-label="Ruta de navegación" class="breadcrumbs-nav" style="margin-bottom: 1rem;">
+    <ol style="list-style: none; display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--gray-500); padding: 0; margin: 0;">
+        <li>
+            <a th:href="@{/}" style="color: var(--gray-600); text-decoration: none;">Inicio</a>
+        </li>
+        <li th:if="${parentUrl != null and parentTitle != null}" style="display: flex; align-items: center; gap: 0.5rem;">
+            <span aria-hidden="true" style="color: var(--gray-400);">&rsaquo;</span>
+            <a th:href="@{${parentUrl}}" th:text="${parentTitle}" style="color: var(--gray-600); text-decoration: none;">Padre</a>
+        </li>
+        <li style="display: flex; align-items: center; gap: 0.5rem;">
+            <span aria-hidden="true" style="color: var(--gray-400);">&rsaquo;</span>
+            <span aria-current="page" th:text="${currentTitle}" style="color: var(--gray-900); font-weight: 500;">Página Actual</span>
+        </li>
+    </ol>
+</nav>
+
+</body>
+</html>

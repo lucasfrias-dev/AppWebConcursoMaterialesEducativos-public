@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<footer th:fragment="footer" class="app-footer">
+    <div class="footer-container">
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <img th:src="@{/images/logo-ced.png}" alt="CED Logo" style="height: 30px; width: auto; opacity: 0.9;">
+            <div>
+                <p style="font-weight: 600; color: var(--gray-800); margin-bottom: 0.2rem;">CED — Concurso de Educación Digital</p>
+                <p style="font-size: 0.75rem; color: var(--gray-500);">&copy; Universidad Nacional del Noroeste de la Provincia de Buenos Aires (UNNOBA)</p>
+            </div>
+        </div>
+        <ul class="footer-links">
+            <li><a th:href="@{/}">Inicio</a></li>
+            <li><a href="https://educaciondigital.unnoba.edu.ar/" target="_blank" rel="noopener">Portal CED</a></li>
+            <li><a href="https://www.unnoba.edu.ar/" target="_blank" rel="noopener">Sitio UNNOBA</a></li>
+        </ul>
+    </div>
+</footer>
+
+</body>
+</html>

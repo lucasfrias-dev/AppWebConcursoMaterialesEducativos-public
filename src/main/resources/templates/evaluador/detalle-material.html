@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Evaluación: ' + (${material != null ? material.titulo : 'Material'}) + ' — Jurado')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/evaluador/materiales/asignados', 'Materiales Asignados', ${material.titulo})}"></nav>
+
+    <div class="page-header">
+        <div>
+            <div class="badge-group" style="margin-bottom: 0.5rem;">
+                <span class="badge badge-primary" th:text="${material.tipoMaterial}">Tipo</span>
+                <span class="badge badge-success" th:text="${material.disciplina}">Disciplina</span>
+                <span th:if="${haEvaluado}" class="badge badge-success">&#10003; Evaluado</span>
+                <span th:unless="${haEvaluado}" class="badge badge-warning">Pendiente de Calificación</span>
+            </div>
+            <h1 class="page-title" th:text="${material.titulo}">Título del Material</h1>
+            <p class="page-subtitle" th:text="'Autores: ' + ${material.autores}"></p>
+        </div>
+        <div>
+            <a th:href="@{/evaluador/materiales/asignados}" class="btn btn-outline btn-sm">
+                &larr; Volver a Asignados
+            </a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div style="display: grid; grid-template-columns: 1fr 380px; gap: 2rem; align-items: start;">
+        <!-- Columna Izquierda: Información del material y visor PDF -->
+        <div>
+            <div class="page-card" style="margin-bottom: 1.5rem;">
+                <h2 style="font-size: 1.2rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.75rem;">Descripción del Trabajo</h2>
+                <p style="color: var(--gray-600); line-height: 1.7; font-size: 0.95rem; white-space: pre-line;" th:text="${material.descripcion}">
+                    Descripción del material.
+                </p>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border);">
+                    <a th:href="@{'/view/' + ${material.id}}" target="_blank" class="btn btn-primary">
+                        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        Abrir Documento PDF
+                    </a>
+
+                    <a th:href="@{'/download/' + ${material.id}}" class="btn btn-outline">
+                        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Descargar PDF
+                    </a>
+
+                    <a th:if="${material.urlVideoPresentacion != null and !#strings.isEmpty(material.urlVideoPresentacion)}" 
+                       th:href="${material.urlVideoPresentacion.startsWith('http://') or material.urlVideoPresentacion.startsWith('https://') ? material.urlVideoPresentacion : 'https://' + material.urlVideoPresentacion}" 
+                       target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                        <svg style="width: 18px; height: 18px; color: var(--danger);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Ver Video
+                    </a>
+                </div>
+
+                <!-- Reproductor de Video Integrado -->
+                <div id="videoContainer" style="display: none; margin-top: 1.5rem; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-color); background: #000;">
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                        <iframe id="videoIframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-card" style="padding: 0; overflow: hidden;">
+                <div style="padding: 0.85rem 1.25rem; background: var(--gray-50); border-bottom: 1px solid var(--border);">
+                    <h3 style="font-size: 0.95rem; font-weight: 600; color: var(--gray-900);">Portada del Material</h3>
+                </div>
+                <div style="background: var(--gray-100); display: flex; justify-content: center; align-items: center; max-height: 400px; overflow: hidden; border-bottom: 1px solid var(--border-color);">
+                    <img th:src="@{'/materiales-participantes/' + ${material.id} + '/preview'}" 
+                         th:alt="'Portada de ' + ${material.titulo}" 
+                         style="max-width: 100%; max-height: 400px; object-fit: contain;"
+                         onerror="this.parentElement.style.display='none';">
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Formulario o Resumen de Evaluación -->
+        <div>
+            <div class="page-card">
+                <h3 style="font-size: 1.15rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg style="width: 20px; height: 20px; color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    Evaluación del Jurado
+                </h3>
+
+                <!-- Si ya fue evaluado -->
+                <div th:if="${haEvaluado}">
+                    <div class="alert alert-success" style="margin-top: 1rem; margin-bottom: 1.25rem;">
+                        <span>Has completado y guardado tu evaluación para este material.</span>
+                    </div>
+
+                    <div style="background: var(--gray-50); border-radius: var(--radius-md); padding: 1.25rem; border: 1px solid var(--border);">
+                        <div style="margin-bottom: 1rem;">
+                            <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--gray-500); font-weight: 600; letter-spacing: 0.05em;">Calificación Otorgada</span>
+                            <div style="font-size: 2rem; font-weight: 800; color: var(--gray-900); display: flex; align-items: baseline; gap: 0.25rem; margin-top: 0.25rem;">
+                                <span th:text="${evaluacion.nota}">0</span>
+                                <span style="font-size: 1rem; font-weight: 500; color: var(--gray-500);">/ 10</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--gray-500); font-weight: 600; letter-spacing: 0.05em;">Dictamen Pedagógico</span>
+                            <p style="margin-top: 0.5rem; font-size: 0.92rem; color: var(--gray-700); line-height: 1.6; white-space: pre-line;" th:text="${evaluacion.comentario}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Si todavía no fue evaluado -->
+                <form th:if="${!haEvaluado}" 
+                      th:action="@{/evaluador/materiales/asignados/{id}/createEvaluacion(id=${material.id})}" 
+                      th:object="${evaluacion}" 
+                      method="post" 
+                      style="margin-top: 1.25rem;">
+
+                    <div class="form-group">
+                        <label for="nota" class="form-label">Calificación Numérica (0 al 10) <span class="required-mark" aria-hidden="true">*</span></label>
+                        <input type="number" th:field="*{nota}" id="nota" name="nota" min="0" max="10" step="0.5" class="form-control" placeholder="Ej. 8.5" required>
+                        <span class="form-text">Escala de 0 a 10 puntos de acuerdo con la rúbrica pedagógica institucional.</span>
+                        <div class="error-text" th:if="${#fields.hasErrors('nota')}" th:errors="*{nota}" style="color: var(--danger-text); font-size: 0.85rem; margin-top: 0.25rem;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comentario" class="form-label">Devolución y observaciones pedagógicas <span class="required-mark" aria-hidden="true">*</span></label>
+                        <textarea th:field="*{comentario}" id="comentario" name="comentario" rows="6" class="form-control" placeholder="Expresa las fortalezas técnicas, pedagógicas y recomendaciones de mejora..." required></textarea>
+                        <div class="error-text" th:if="${#fields.hasErrors('comentario')}" th:errors="*{comentario}" style="color: var(--danger-text); font-size: 0.85rem; margin-top: 0.25rem;"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+                        Registrar Dictamen
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+document.addEventListener("DOMContentLoaded", function() {
+    var rawUrl = /*[[${material.urlVideoPresentacion}]]*/ '';
+    if (!rawUrl) return;
+
+    var embedUrl = null;
+    var ytMatch = rawUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+    if (ytMatch && ytMatch[1]) {
+        embedUrl = 'https://www.youtube.com/embed/' + ytMatch[1] + '?rel=0';
+    } else {
+        var vmMatch = rawUrl.match(/(?:vimeo\.com\/)(\d+)/i);
+        if (vmMatch && vmMatch[1]) {
+            embedUrl = 'https://player.vimeo.com/video/' + vmMatch[1];
+        }
+    }
+
+    if (embedUrl) {
+        var container = document.getElementById('videoContainer');
+        var iframe = document.getElementById('videoIframe');
+        if (container && iframe) {
+            iframe.src = embedUrl;
+            container.style.display = 'block';
+        }
+    }
+});
+/*]]>*/
+</script>
+
+</body>
+</html>

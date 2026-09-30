@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Gestión de Participantes y Ganadores — ' + (${edicion != null ? edicion : 'CED'}) + ' — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/index', 'Administración', 'Participantes y Ganadores (' + (${edicion != null ? edicion : 'CED'}) + ')')}"></nav>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Gestión de Participantes y Ganadores</h1>
+            <p class="page-subtitle" th:text="'Edición en concurso: ' + (${edicion != null ? edicion : 'General'})"></p>
+        </div>
+        <div>
+            <a th:href="@{/administrador/index}" class="btn btn-outline btn-sm">&larr; Volver al panel</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <!-- Sección 1: Ganadores declarados -->
+    <div style="margin-bottom: 3rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div class="badge badge-gold" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">
+                &#9733; Galardonados Oficiales
+            </div>
+            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900);">Materiales Ganadores</h2>
+        </div>
+
+        <div th:if="${materialesGanadores != null and materialesGanadores.size() > 0}" class="materials-grid">
+            <div th:each="material : ${materialesGanadores}" class="material-card material-card-winner">
+                <div class="material-preview-wrapper">
+                    <div style="position: absolute; top: 12px; right: 12px; z-index: 10;">
+                        <span class="badge badge-gold">&#9733; Ganador</span>
+                    </div>
+                    <img th:src="@{'/materiales-participantes/' + ${material.id} + '/preview'}" 
+                         th:alt="'Portada de ' + ${material.titulo}" 
+                         class="material-preview-img"
+                         loading="lazy"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: var(--gray-100); color: var(--gray-500); font-size: 0.85rem;">
+                        Vista previa no disponible
+                    </div>
+                </div>
+
+                <div class="material-body">
+                    <div class="badge-group">
+                        <span class="badge badge-primary" th:text="${material.tipoMaterial}">Tipo</span>
+                        <span class="badge badge-default" th:text="${material.disciplina}">Disciplina</span>
+                    </div>
+
+                    <h3 class="material-title" th:text="${material.titulo}">Título</h3>
+                    <p class="material-desc" th:text="${material.descripcion}">Descripción</p>
+
+                    <div class="material-footer" style="flex-direction: column; gap: 0.75rem; align-items: stretch;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <a th:href="@{'/administrador/materiales/' + ${#strings.replace(edicion != null ? edicion : 'III-Edicion', ' ', '-')} + '/' + ${material.id}}" class="btn btn-outline btn-sm">
+                                Ver Ficha
+                            </a>
+                            <span class="likes-counter">
+                                <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                                <span th:text="${material.likes}">0</span>
+                            </span>
+                        </div>
+
+                        <form th:action="@{'/administrador/materiales/' + ${#strings.replace(edicion != null ? edicion : 'III-Edicion', ' ', '-')} + '/participantes/' + ${material.id} + '/remove-ganador'}" method="post">
+                            <button type="submit" class="btn btn-outline btn-sm" style="width: 100%; color: var(--danger-text); border-color: var(--border-color);" onclick="return confirm('¿Quitar la distinción de ganador a este material?');">
+                                Quitar distinción de ganador
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:unless="${materialesGanadores != null and materialesGanadores.size() > 0}" class="page-card" style="padding: 1.5rem; color: var(--gray-500); font-size: 0.92rem;">
+            Aún no se ha seleccionado ningún material ganador para esta edición.
+        </div>
+    </div>
+
+    <!-- Sección 2: Todos los Participantes Aprobados -->
+    <div>
+        <div style="margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900);">Todos los Materiales Participantes Aprobados</h2>
+            <p style="color: var(--gray-500); font-size: 0.88rem;">Propuestas admitidas formalmente para competir en esta edición</p>
+        </div>
+
+        <div th:if="${materialesParticipantes != null and materialesParticipantes.size() > 0}" class="materials-grid">
+            <div th:each="material : ${materialesParticipantes}" class="material-card">
+                <div class="material-preview-wrapper">
+                    <img th:src="@{'/materiales-participantes/' + ${material.id} + '/preview'}" 
+                         th:alt="'Portada de ' + ${material.titulo}" 
+                         class="material-preview-img"
+                         loading="lazy"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: var(--gray-100); color: var(--gray-500); font-size: 0.85rem;">
+                        Vista previa no disponible
+                    </div>
+                </div>
+
+                <div class="material-body">
+                    <div class="badge-group">
+                        <span class="badge badge-primary" th:text="${material.tipoMaterial}">Tipo</span>
+                        <span class="badge badge-default" th:text="${material.disciplina}">Disciplina</span>
+                        <span th:if="${material.ganador}" class="badge badge-gold">&#9733; Ganador</span>
+                    </div>
+
+                    <h3 class="material-title" th:text="${material.titulo}">Título</h3>
+                    <p class="material-desc" th:text="${material.descripcion}">Descripción</p>
+
+                    <div class="material-footer" style="flex-direction: column; gap: 0.75rem; align-items: stretch;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <a th:href="@{'/administrador/materiales/' + ${#strings.replace(edicion != null ? edicion : 'III-Edicion', ' ', '-')} + '/' + ${material.id}}" class="btn btn-outline btn-sm">
+                                Ver Ficha
+                            </a>
+                            <span class="likes-counter">
+                                <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                                <span th:text="${material.likes}">0</span>
+                            </span>
+                        </div>
+
+                        <form th:if="${!material.ganador}" th:action="@{'/administrador/materiales/' + ${#strings.replace(edicion != null ? edicion : 'III-Edicion', ' ', '-')} + '/participantes/' + ${material.id} + '/ganador'}" method="post">
+                            <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;" onclick="return confirm('¿Declarar este material como GANADOR del concurso?');">
+                                Declarar Ganador Oficial
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <th:block th:if="${materialesParticipantes == null or #lists.isEmpty(materialesParticipantes)}">
+            <div th:replace="~{fragments/empty-state :: emptyState('No hay propuestas participantes', 'No existen materiales participantes aprobados para esta edición del concurso.', '/administrador/index', 'Volver al Panel')}"></div>
+        </th:block>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

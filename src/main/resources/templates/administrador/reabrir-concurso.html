@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Reabrir ' + ${concurso.edicion} + ' — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div style="max-width: 540px; margin: 0 auto;">
+        <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/concurso/' + ${#strings.replace(concurso.edicion, ' ', '-')}, 'Detalle ' + ${concurso.edicion}, 'Reabrir Concurso')}"></nav>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Reabrir Edición de Concurso</h1>
+                <p class="page-subtitle" th:text="'Habilitar nuevamente la convocatoria para ' + ${concurso.edicion}"></p>
+            </div>
+            <div>
+                <a th:href="@{/administrador/index}" class="btn btn-outline btn-sm">&larr; Panel</a>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <div class="page-card">
+            <div class="alert alert-warning" style="margin-bottom: 1.5rem;">
+                <span>Al reabrir esta edición, el concurso volverá a estar activo y se extenderá hasta la fecha indicada.</span>
+            </div>
+
+            <form th:action="@{'/administrador/concurso/' + ${#strings.replace(concurso.edicion, ' ', '-')} + '/reabrir'}" method="post">
+                <div class="form-group">
+                    <label for="fechaFin" class="form-label">Nueva Fecha de Fin y Clausura <span class="required-mark" aria-hidden="true">*</span></label>
+                    <input type="datetime-local" id="fechaFin" name="fechaFin" class="form-control" required>
+                    <span class="form-text">Debe ser una fecha posterior a la fecha y hora actual.</span>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <a th:href="@{/administrador/index}" class="btn btn-outline">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        Confirmar Reapertura
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

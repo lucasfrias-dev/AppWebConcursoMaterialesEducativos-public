@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Dar de Baja a Usuario — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div style="max-width: 480px; margin: 2rem auto;">
+        <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/usuarios/all', 'Usuarios', 'Dar de Baja')}"></nav>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <div class="page-card" style="padding: 2rem;">
+            <span class="badge badge-danger" style="margin-bottom: 0.5rem;">Inhabilitación de Cuenta</span>
+            <h1 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.5rem;">
+                Dar de Baja a Usuario
+            </h1>
+            <p style="color: var(--gray-600); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                ¿Confirma que desea inhabilitar el acceso para <strong th:text="${usuario.nombre + ' ' + usuario.apellido}">este usuario</strong> (<span th:text="${usuario.email}"></span>)? El usuario no podrá iniciar sesión en la plataforma mientras la cuenta permanezca inactiva.
+            </p>
+
+            <form th:action="@{/administrador/usuarios/{id}/bajaUsuario(id=${usuario.id})}" method="post" style="display: flex; justify-content: flex-end; gap: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                <a th:href="@{/administrador/usuarios/all}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-danger">
+                    Confirmar Baja
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

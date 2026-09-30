@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Directorio de Usuarios — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/index', 'Administración', 'Directorio de Usuarios')}"></nav>
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Directorio de Usuarios</h1>
+            <p class="page-subtitle">Gestión de cuentas, roles y estados de acceso al sistema</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a th:href="@{/administrador/index}" class="btn btn-outline btn-sm">&larr; Panel</a>
+            <a th:href="@{/administrador/register/evaluador}" class="btn btn-outline btn-sm">+ Nuevo Evaluador</a>
+            <a th:href="@{/administrador/register/admin}" class="btn btn-primary btn-sm">+ Nuevo Admin</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="page-card" style="padding: 0; overflow: hidden;">
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Completo</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th style="text-align: right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td th:text="${usuario.id}" style="color: var(--text-muted); font-weight: 500;"></td>
+                        <td>
+                            <strong th:text="${usuario.nombre + ' ' + usuario.apellido}">Nombre Apellido</strong>
+                        </td>
+                        <td th:text="${usuario.email}">email@ejemplo.com</td>
+                        <td>
+                            <span th:if="${usuario.rol.toString() == 'ADMINISTRADOR'}" class="badge badge-primary">ADMINISTRADOR</span>
+                            <span th:if="${usuario.rol.toString() == 'EVALUADOR'}" class="badge badge-warning">EVALUADOR</span>
+                            <span th:if="${usuario.rol.toString() == 'CONCURSANTE'}" class="badge badge-success">CONCURSANTE</span>
+                        </td>
+                        <td>
+                            <span th:if="${usuario.active}" class="badge badge-success">Activo</span>
+                            <span th:unless="${usuario.active}" class="badge badge-default">Inactivo</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <a th:if="${usuario.active}" 
+                               th:href="@{/administrador/usuarios/{id}/bajaUsuario(id=${usuario.id})}" 
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('¿Confirmas dar de baja a este usuario?');">
+                                Dar de baja
+                            </a>
+                            <a th:unless="${usuario.active}" 
+                               th:href="@{/administrador/usuarios/{id}/altaUsuario(id=${usuario.id})}" 
+                               class="btn btn-success btn-sm">
+                                Activar cuenta
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Postular Material Educativo — Concursante')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div style="max-width: 720px; margin: 0 auto;">
+        <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/concursante/index', 'Panel Concursante', 'Postular Material')}"></nav>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Postular Material Educativo</h1>
+                <p class="page-subtitle">Complete la ficha pedagógica y adjunte el documento PDF para el jurado</p>
+            </div>
+            <div>
+                <a th:href="@{/concursante/index}" class="btn btn-outline btn-sm">&larr; Volver</a>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <div class="page-card">
+            <form th:action="@{/concursante/postular-material}" th:object="${material}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="titulo" class="form-label">
+                        Título de la propuesta <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                    </label>
+                    <input type="text" th:field="*{titulo}" id="titulo" class="form-control" placeholder="Ej. Guía interactiva de programación básica" required>
+                    <div class="error-text" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion" class="form-label">
+                        Descripción pedagógica <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                    </label>
+                    <textarea th:field="*{descripcion}" id="descripcion" class="form-control" rows="4" placeholder="Describa los objetivos de aprendizaje, destinatarios y metodología..." required></textarea>
+                    <div class="error-text" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+                    <div class="form-group">
+                        <label for="tipoMaterial" class="form-label">
+                            Tipo de Material <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                        </label>
+                        <input type="text" th:field="*{tipoMaterial}" id="tipoMaterial" class="form-control" placeholder="Ej. Secuencia didáctica, Guía, Objeto de aprendizaje" required>
+                        <div class="error-text" th:if="${#fields.hasErrors('tipoMaterial')}" th:errors="*{tipoMaterial}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="disciplina" class="form-label">
+                            Disciplina / Área <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                        </label>
+                        <input type="text" th:field="*{disciplina}" id="disciplina" class="form-control" placeholder="Ej. Informática, Matemática, Ciencias Sociales" required>
+                        <div class="error-text" th:if="${#fields.hasErrors('disciplina')}" th:errors="*{disciplina}"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="autores" class="form-label">
+                        Autores del material <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                    </label>
+                    <input type="text" th:field="*{autores}" id="autores" class="form-control" placeholder="Nombres de los integrantes del equipo docente" required>
+                    <div class="error-text" th:if="${#fields.hasErrors('autores')}" th:errors="*{autores}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="urlVideoPresentacion" class="form-label">
+                        Enlace a video de presentación <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                    </label>
+                    <input type="url" th:field="*{urlVideoPresentacion}" id="urlVideoPresentacion" class="form-control" placeholder="https://www.youtube.com/watch?v=..." required>
+                    <div class="form-text">Enlace accesible (YouTube, Vimeo o Google Drive con permisos públicos).</div>
+                    <div class="error-text" th:if="${#fields.hasErrors('urlVideoPresentacion')}" th:errors="*{urlVideoPresentacion}"></div>
+                </div>
+
+                <div class="form-group" style="border: 1px dashed var(--border-color); padding: 1.25rem; border-radius: var(--radius-sm); background-color: var(--gray-50);">
+                    <label for="file" class="form-label">
+                        Documento del material educativo (PDF) <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                    </label>
+                    <input type="file" id="file" name="file" class="form-control" accept="application/pdf" required style="background: #fff;">
+                    <div class="form-text">Formato admitido: PDF (tamaño máximo recomendado: 16 MB).</div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                    <a th:href="@{/concursante/index}" class="btn btn-outline">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Postular Material</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

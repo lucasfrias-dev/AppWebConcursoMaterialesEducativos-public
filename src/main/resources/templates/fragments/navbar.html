@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head></head>
+<body>
+
+<header th:fragment="navbar" class="app-header">
+    <div class="header-container">
+        <div class="brand-wrapper">
+            <a th:href="@{/}">
+                <img th:src="@{/images/logo-ced.png}" alt="CED - Concurso de Educación Digital" class="brand-logo-img">
+                <span class="brand-divider"></span>
+                <div class="brand-subtext">
+                    <span class="title">Concurso de Educación Digital</span>
+                    <span class="subtitle">UNNOBA</span>
+                </div>
+            </a>
+            <span th:if="${ultimaEdicion != null}" class="edition-pill" th:text="${ultimaEdicion}"></span>
+            <span th:if="${concursoActual != null}" class="edition-pill" th:text="'Edición actual: ' + ${concursoActual.edicion}"></span>
+        </div>
+
+        <nav>
+            <ul class="nav-menu">
+                <!-- Enlaces Públicos -->
+                <li><a th:href="@{/}" class="nav-link">Inicio</a></li>
+
+                <li th:if="${ultimaEdicion != null}">
+                    <a th:href="@{'/materiales-participantes/' + ${#strings.replace(ultimaEdicion, ' ', '-')}}" class="nav-link">Materiales</a>
+                </li>
+
+                <!-- Panel Concursante -->
+                <li sec:authorize="hasRole('CONCURSANTE')">
+                    <a th:href="@{/concursante/index}" class="nav-link">Panel</a>
+                </li>
+                <li sec:authorize="hasRole('CONCURSANTE')">
+                    <a th:href="@{/concursante/mis-materiales}" class="nav-link">Mis Materiales</a>
+                </li>
+
+                <!-- Panel Evaluador -->
+                <li sec:authorize="hasRole('EVALUADOR')">
+                    <a th:href="@{/evaluador/index}" class="nav-link">Panel Evaluador</a>
+                </li>
+                <li sec:authorize="hasRole('EVALUADOR')">
+                    <a th:href="@{/evaluador/materiales/asignados}" class="nav-link">Asignados</a>
+                </li>
+
+                <!-- Panel Administrador -->
+                <li sec:authorize="hasRole('ADMINISTRADOR')">
+                    <a th:href="@{/administrador/index}" class="nav-link">Administración</a>
+                </li>
+                <li sec:authorize="hasRole('ADMINISTRADOR')">
+                    <a th:href="@{/administrador/usuarios/all}" class="nav-link">Usuarios</a>
+                </li>
+
+                <!-- Autenticación / Registro -->
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/participar}" class="nav-link btn-cta">Participar</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="nav-link">Iniciar sesión</a>
+                </li>
+
+                <!-- Usuario Autenticado / Logout -->
+                <li sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" style="display: inline; margin: 0;">
+                        <button type="submit" class="nav-link" style="border: none; background: transparent; cursor: pointer; font-family: inherit; font-size: 0.85rem; padding: 0.45rem 0.75rem;">Cerrar sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+</body>
+</html>

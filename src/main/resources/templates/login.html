@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Iniciar Sesión — Concurso UNNOBA')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1 class="page-title" style="font-size: 1.35rem;">Iniciar Sesión</h1>
+            <p class="page-subtitle">Ingrese sus credenciales institucionales</p>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="email" class="form-label">Correo electrónico</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="usuario@correo.com" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+                Ingresar
+            </button>
+        </form>
+
+        <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem; text-align: center;">
+            <p style="font-size: 0.82rem; color: var(--gray-600);">
+                ¿Desea participar del concurso?
+                <a th:href="@{/participar}" style="font-weight: 500;">Registrarse aquí</a>
+            </p>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

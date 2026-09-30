@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Crear Nueva Convocatoria — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div style="max-width: 680px; margin: 0 auto;">
+        <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/index', 'Administración', 'Nueva Convocatoria')}"></nav>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Crear Convocatoria de Concurso</h1>
+                <p class="page-subtitle">Configuración del cronograma oficial de etapas para la nueva edición</p>
+            </div>
+            <div>
+                <a th:href="@{/administrador/index}" class="btn btn-outline btn-sm">&larr; Panel</a>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <div class="page-card">
+            <form th:action="@{/administrador/new-concurso}" th:object="${concurso}" method="post">
+                <input type="hidden" th:field="*{edicion}">
+                <div class="form-group">
+                    <label class="form-label">Edición asignada correlativamente</label>
+                    <div style="background: var(--gray-50); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.65rem 0.85rem; font-weight: 600; color: var(--unnoba-blue); font-size: 1rem;">
+                        <span th:text="${concurso.edicion != null ? concurso.edicion : (nextEdicion != null ? nextEdicion : 'Calculando edición...')}">Edición</span>
+                    </div>
+                    <div class="form-text">La numeración romana correlativa es generada automáticamente por el sistema.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaInicio" class="form-label">
+                        Fecha y hora de inicio de la convocatoria <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                    </label>
+                    <input type="datetime-local" th:field="*{fechaInicio}" id="fechaInicio" class="form-control" required onchange="actualizarFechaFin()">
+                    <div class="error-text" th:if="${#fields.hasErrors('fechaInicio')}" th:errors="*{fechaInicio}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaFinPostulaciones" class="form-label">
+                        Cierre del período de postulación de materiales <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                    </label>
+                    <input type="datetime-local" th:field="*{fechaFinPostulaciones}" id="fechaFinPostulaciones" class="form-control" required>
+                    <div class="error-text" th:if="${#fields.hasErrors('fechaFinPostulaciones')}" th:errors="*{fechaFinPostulaciones}"></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+                    <div class="form-group">
+                        <label for="fechaInicioVotacion" class="form-label">
+                            Inicio de votación del público <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                        </label>
+                        <input type="datetime-local" th:field="*{fechaInicioVotacion}" id="fechaInicioVotacion" class="form-control" required>
+                        <div class="error-text" th:if="${#fields.hasErrors('fechaInicioVotacion')}" th:errors="*{fechaInicioVotacion}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fechaFinVotacion" class="form-label">
+                            Cierre de votación del público <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                        </label>
+                        <input type="datetime-local" th:field="*{fechaFinVotacion}" id="fechaFinVotacion" class="form-control" required>
+                        <div class="error-text" th:if="${#fields.hasErrors('fechaFinVotacion')}" th:errors="*{fechaFinVotacion}"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaFin" class="form-label">
+                        Fecha y hora de finalización del concurso <span style="color: var(--danger-text);" aria-hidden="true">*</span>
+                    </label>
+                    <input type="datetime-local" th:field="*{fechaFin}" id="fechaFin" class="form-control" required>
+                    <div class="error-text" th:if="${#fields.hasErrors('fechaFin')}" th:errors="*{fechaFin}"></div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                    <a th:href="@{/administrador/index}" class="btn btn-outline">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Abrir Concurso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script>
+    window.onload = function(){
+        let fechaActual = new Date();
+        let dia = ("0" + fechaActual.getDate()).slice(-2);
+        let mes = ("0" + (fechaActual.getMonth() + 1)).slice(-2);
+        let hora = ("0" + fechaActual.getHours()).slice(-2);
+        let minuto = ("0" + fechaActual.getMinutes()).slice(-2);
+        let fechaHoy = fechaActual.getFullYear() + "-" + (mes) + "-" + (dia) + "T" + (hora) + ":" + (minuto);
+
+        let inputInicio = document.getElementById("fechaInicio");
+        let inputFin = document.getElementById("fechaFin");
+        if (inputInicio) inputInicio.setAttribute("min", fechaHoy);
+        if (inputFin) inputFin.setAttribute("min", fechaHoy);
+    }
+
+    function actualizarFechaFin(){
+        let fechaInicio = document.getElementById("fechaInicio").value;
+        let inputFin = document.getElementById("fechaFin");
+        if (inputFin && fechaInicio) {
+            inputFin.setAttribute("min", fechaInicio);
+        }
+    }
+</script>
+
+</body>
+</html>

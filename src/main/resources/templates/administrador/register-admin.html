@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Registrar Administrador — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div style="max-width: 580px; margin: 0 auto;">
+        <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/admin/registrados', 'Administradores', 'Registrar Administrador')}"></nav>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Registrar Administrador</h1>
+                <p class="page-subtitle">Crea una nueva cuenta con permisos institucionales de gestión global</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a th:href="@{/administrador/admin/registrados}" class="btn btn-outline btn-sm">Ver Registrados</a>
+                <a th:href="@{/administrador/index}" class="btn btn-outline btn-sm">&larr; Panel</a>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <div class="page-card">
+            <form th:action="@{/administrador/register/admin}" th:object="${admin}" method="post">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="nombre" class="form-label">Nombre <span class="required-mark" aria-hidden="true">*</span></label>
+                        <input type="text" th:field="*{nombre}" id="nombre" class="form-control" placeholder="Nombre" required>
+                        <div class="error-text" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apellido" class="form-label">Apellido <span class="required-mark" aria-hidden="true">*</span></label>
+                        <input type="text" th:field="*{apellido}" id="apellido" class="form-control" placeholder="Apellido" required>
+                        <div class="error-text" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Correo electrónico institucional <span class="required-mark" aria-hidden="true">*</span></label>
+                    <input type="email" th:field="*{email}" id="email" class="form-control" placeholder="admin@unnoba.edu.ar" required>
+                    <div class="error-text" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Contraseña <span class="required-mark" aria-hidden="true">*</span></label>
+                    <input type="password" th:field="*{password}" id="password" class="form-control" placeholder="Mínimo 8 caracteres" required>
+                    <span class="form-text">Debe tener al menos 8 caracteres, con mayúscula, minúscula y un dígito.</span>
+                    <div class="error-text" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="passwordConfirm" class="form-label">Confirmar Contraseña <span class="required-mark" aria-hidden="true">*</span></label>
+                    <input type="password" th:field="*{passwordConfirm}" id="passwordConfirm" class="form-control" placeholder="Repite la contraseña" required>
+                    <div class="error-text" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <a th:href="@{/administrador/admin/registrados}" class="btn btn-outline">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        Registrar Administrador
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

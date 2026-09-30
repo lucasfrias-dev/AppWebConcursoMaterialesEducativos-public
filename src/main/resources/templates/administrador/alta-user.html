@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Activar Cuenta de Usuario — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div style="max-width: 480px; margin: 2rem auto;">
+        <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/usuarios/all', 'Usuarios', 'Activar Cuenta')}"></nav>
+
+        <div class="page-card" style="padding: 2rem;">
+            <span class="badge badge-success" style="margin-bottom: 0.5rem;">Habilitación de Acceso</span>
+            <h1 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.5rem;">
+                Activar Cuenta de Usuario
+            </h1>
+            <p style="color: var(--gray-600); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                ¿Confirma que desea habilitar nuevamente el acceso al sistema para <strong th:text="${usuario.nombre + ' ' + usuario.apellido}">este usuario</strong> (<span th:text="${usuario.email}"></span>)?
+            </p>
+
+            <form th:action="@{/administrador/usuarios/{id}/altaUsuario(id=${usuario.id})}" method="post" style="display: flex; justify-content: flex-end; gap: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                <a th:href="@{/administrador/usuarios/all}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-success">
+                    Confirmar Activación
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

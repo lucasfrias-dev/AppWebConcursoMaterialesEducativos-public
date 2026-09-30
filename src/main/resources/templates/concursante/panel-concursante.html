@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Panel del Docente Concursante — UNNOBA')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <span class="badge badge-primary" style="margin-bottom: 0.4rem;">Panel Concursante</span>
+            <h1 class="page-title" th:text="'Bienvenido, ' + ${#authentication.name}">Bienvenido Concursante</h1>
+            <p class="page-subtitle" th:if="${edicionActual != null and edicionActual != 'null'}" 
+               th:text="'Concurso activo: ' + ${edicionActual}"></p>
+            <p class="page-subtitle" th:if="${edicionActual == null or edicionActual == 'null'}">
+                No hay concurso activo actualmente.
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <a th:href="@{/concursante/profile}" class="btn btn-outline btn-sm">Mi Perfil</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div th:if="${!puedePostular}" class="alert alert-warning" role="alert">
+        <span>El período para postular nuevos materiales se encuentra actualmente cerrado.</span>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Postular Material -->
+        <div class="dashboard-card">
+            <div>
+                <h3 style="font-size: 1.05rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.35rem;">Postular Material</h3>
+                <p style="color: var(--gray-600); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Presente un nuevo material educativo en formato PDF, indicando disciplina, autores y enlace al video de presentación.
+                </p>
+            </div>
+            <div>
+                <a th:if="${puedePostular}" th:href="@{/concursante/postular-material}" class="btn btn-primary" style="width: 100%;">
+                    Postular Nuevo Material
+                </a>
+                <button th:unless="${puedePostular}" class="btn btn-outline" style="width: 100%; opacity: 0.6; cursor: not-allowed;" disabled>
+                    Postulación No Disponible
+                </button>
+            </div>
+        </div>
+
+        <!-- Mis Materiales -->
+        <div class="dashboard-card">
+            <div>
+                <h3 style="font-size: 1.05rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.35rem;">Mis Materiales</h3>
+                <p style="color: var(--gray-600); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Consulte el estado de aprobación, evaluaciones recibidas y votos del público para sus recursos postulados.
+                </p>
+            </div>
+            <div>
+                <a th:href="@{/concursante/mis-materiales}" class="btn btn-outline" style="width: 100%;">
+                    Ver Mis Postulaciones
+                </a>
+            </div>
+        </div>
+
+        <!-- Galería General -->
+        <div class="dashboard-card">
+            <div>
+                <h3 style="font-size: 1.05rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.35rem;">Materiales Participantes</h3>
+                <p style="color: var(--gray-600); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Explore las propuestas educativas presentadas por docentes de otras cátedras y áreas curriculares.
+                </p>
+            </div>
+            <div>
+                <a th:if="${edicionActual != null and edicionActual != 'null'}" 
+                   th:href="@{'/materiales-participantes/' + ${#strings.replace(edicionActual, ' ', '-')}}" 
+                   class="btn btn-outline" style="width: 100%;">
+                    Explorar Galería
+                </a>
+                <a th:unless="${edicionActual != null and edicionActual != 'null'}" 
+                   th:href="@{/}" 
+                   class="btn btn-outline" style="width: 100%;">
+                    Ir al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

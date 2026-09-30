@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<div th:fragment="alerts" class="alerts-container">
+    <!-- Success Message -->
+    <div th:if="${(message != null and !#strings.isEmpty(message)) or (successMessage != null and !#strings.isEmpty(successMessage)) or (success != null and !#strings.isEmpty(success))}" class="alert alert-success" role="alert">
+        <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span th:text="${message != null and !#strings.isEmpty(message) ? message : (successMessage != null and !#strings.isEmpty(successMessage) ? successMessage : success)}"></span>
+        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+
+    <!-- Error Message -->
+    <div th:if="${(error != null and !#strings.isEmpty(error)) or (errorMessage != null and !#strings.isEmpty(errorMessage))}" class="alert alert-danger" role="alert">
+        <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span th:text="${error != null and !#strings.isEmpty(error) ? error : errorMessage}"></span>
+        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+
+    <div th:if="${loginError != null and !#strings.isEmpty(loginError)}" class="alert alert-danger" role="alert">
+        <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+        <span th:text="${loginError}"></span>
+        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+
+    <!-- Security URL param alerts -->
+    <div th:if="${param.error != null}" class="alert alert-danger" role="alert">
+        <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+        <span th:if="${param.error[0] == 'disabled'}">Tu cuenta se encuentra inactiva. Por favor contacta al administrador.</span>
+        <span th:if="${param.error[0] == 'bad_credentials'}">Credenciales incorrectas. Verifique su correo o contraseña.</span>
+        <span th:if="${param.error[0] != 'disabled' and param.error[0] != 'bad_credentials'}">Error al iniciar sesión. Compruebe sus credenciales.</span>
+        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+
+    <div th:if="${param.logout != null}" class="alert alert-info" role="alert">
+        <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Has cerrado sesión correctamente.</span>
+        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+</div>
+
+</body>
+</html>

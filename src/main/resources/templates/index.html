@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Concurso de Materiales Educativos — UNNOBA')}"></head>
+<body>
+
+<!-- Navegación -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="main-content">
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <!-- Sección Principal / Convocatoria -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <span class="hero-tag">Convocatoria Abierta</span>
+            <h1 class="hero-title" th:if="${ultimaEdicion != null}" th:text="'Concurso de Materiales Educativos ' + ${ultimaEdicion}">Concurso de Materiales Educativos</h1>
+            <h1 class="hero-title" th:if="${ultimaEdicion == null}">Concurso de Materiales Educativos</h1>
+            <p class="hero-subtitle">
+                Espacio institucional de reconocimiento y estímulo a la innovación pedagógica en entornos digitales para docentes de la UNNOBA.
+            </p>
+            <div class="hero-actions">
+                <a th:if="${ultimaEdicion != null}" th:href="@{'/materiales-participantes/' + ${#strings.replace(ultimaEdicion, ' ', '-')}}" class="btn btn-primary">
+                    Ver Materiales Participantes
+                </a>
+                <a th:href="@{/participar}" class="btn btn-outline">
+                    Postular un Material
+                </a>
+                <button type="button" class="btn btn-outline" onclick="openAboutModal()">
+                    Bases y Condiciones
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Estado y Ediciones -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        
+        <!-- Edición Actual -->
+        <div class="page-card" style="margin-bottom: 0;">
+            <div style="margin-bottom: 1rem;">
+                <h2 style="font-size: 1.15rem; font-weight: 600; color: var(--gray-900);">Edición Actual</h2>
+                <p style="color: var(--gray-500); font-size: 0.8rem;" th:if="${concurso != null}" th:text="'Año ' + ${anio}"></p>
+            </div>
+            
+            <div th:if="${concurso != null}">
+                <p style="color: var(--gray-600); font-size: 0.88rem; margin-bottom: 1.25rem;">
+                    Acceda a los recursos pedagógicos postulados por equipos docentes de las distintas disciplinas y participe en la votación abierta.
+                </p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a th:href="@{'/materiales-participantes/' + ${#strings.replace(ultimaEdicion, ' ', '-')}}" class="btn btn-primary btn-sm">
+                        Explorar Materiales
+                    </a>
+                    <a th:if="${concurso.fechaFin != null and T(java.time.LocalDateTime).now().isAfter(concurso.fechaFin)}"
+                       th:href="@{'/materiales-ganadores/' + ${#strings.replace(ultimaEdicion, ' ', '-')}}"
+                       class="btn btn-outline btn-sm">
+                        Materiales Ganadores
+                    </a>
+                </div>
+            </div>
+            <div th:unless="${concurso != null}">
+                <p style="color: var(--gray-500); font-size: 0.88rem;">
+                    No hay una convocatoria activa en este momento. Las novedades se comunicarán oportunamente por los canales institucionales.
+                </p>
+            </div>
+        </div>
+
+        <!-- Ediciones Anteriores -->
+        <div class="page-card" style="margin-bottom: 0;">
+            <div style="margin-bottom: 1rem;">
+                <h2 style="font-size: 1.15rem; font-weight: 600; color: var(--gray-900);">Historial de Concursos</h2>
+                <p style="color: var(--gray-500); font-size: 0.8rem;">Repositorio de ediciones anteriores</p>
+            </div>
+
+            <div th:if="${concursosAnteriores != null and concursosAnteriores.size() > 0}">
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
+                    <div th:each="ant : ${concursosAnteriores}" style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.75rem; background-color: var(--gray-50); border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+                        <span style="font-weight: 500; font-size: 0.85rem;" th:text="${ant.edicion}"></span>
+                        <div style="display: flex; gap: 0.4rem;">
+                            <a th:href="@{'/materiales-participantes/' + ${#strings.replace(ant.edicion, ' ', '-')}}" class="btn btn-outline btn-sm">Participantes</a>
+                            <a th:href="@{'/materiales-ganadores/' + ${#strings.replace(ant.edicion, ' ', '-')}}" class="btn btn-outline btn-sm">Ganadores</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a href="https://wite.unnoba.edu.ar/concurso-ced/" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Repositorio II Edición</a>
+                <a href="https://educaciondigital.unnoba.edu.ar/concurso-de-diseno-de-materiales-educativos-digitales-2021/" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Edición 2021</a>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Modal: Bases y Condiciones -->
+<div id="aboutModal" class="modal-backdrop" onclick="closeAboutModal(event)">
+    <div class="modal-dialog" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--gray-900);">Bases y Condiciones del Concurso</h3>
+            <button type="button" class="alert-close" onclick="closeAboutModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <h4 style="color: var(--gray-900); margin-bottom: 0.25rem; font-size: 0.9rem;">Objetivo</h4>
+            <p style="margin-bottom: 1rem;">Reconocer y estimular a docentes innovadores para impulsar espacios educativos creativos y promover el aprendizaje colaborativo en el entorno de la universidad.</p>
+
+            <h4 style="color: var(--gray-900); margin-bottom: 0.25rem; font-size: 0.9rem;">Temática</h4>
+            <p style="margin-bottom: 1rem;">Los participantes pueden presentar materiales digitales originales que apoyen las actividades curriculares y cumplan las pautas establecidas.</p>
+
+            <h4 style="color: var(--gray-900); margin-bottom: 0.25rem; font-size: 0.9rem;">Destinatarios</h4>
+            <p>Docentes de todas las carreras y asignaturas de la UNNOBA, en presentaciones individuales o en equipos de hasta cinco integrantes.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeAboutModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    function openAboutModal() {
+        document.getElementById('aboutModal').style.display = 'flex';
+    }
+    function closeAboutModal(e) {
+        if (!e || e.target.id === 'aboutModal' || e.target.classList.contains('alert-close') || e.target.tagName === 'BUTTON') {
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

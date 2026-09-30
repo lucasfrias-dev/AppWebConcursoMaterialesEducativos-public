@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Modificar Cronograma — Administración')}"></head>
+<body>
+
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="main-content">
+    <div style="max-width: 520px; margin: 0 auto;">
+        <nav th:replace="~{fragments/breadcrumbs :: breadcrumbs('/administrador/concurso/' + ${#strings.replace(concurso.edicion, ' ', '-')}, 'Detalle ' + ${concurso.edicion}, 'Modificar Cronograma')}"></nav>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Actualizar Cronograma</h1>
+                <p class="page-subtitle" th:text="'Modificando plazo de ' + ${campo} + ' • ' + ${concurso.edicion}"></p>
+            </div>
+            <div>
+                <a th:href="@{'/administrador/concurso/' + ${#strings.replace(concurso.edicion, ' ', '-')}}" class="btn btn-outline btn-sm">
+                    &larr; Volver
+                </a>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <div class="page-card">
+            <form th:action="@{'/administrador/concurso/' + ${#strings.replace(concurso.edicion, ' ', '-')} + '/editar/' + ${campo}}" method="post">
+                <div class="form-group">
+                    <label for="fecha" class="form-label">Nueva Fecha y Hora Límite <span class="required-mark" aria-hidden="true">*</span></label>
+                    <input type="datetime-local" id="fecha" name="fecha" class="form-control" required>
+                    <span class="form-text">Especifica la nueva fecha y hora para este hito del certamen.</span>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <a th:href="@{'/administrador/concurso/' + ${#strings.replace(concurso.edicion, ' ', '-')}}" class="btn btn-outline">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar Modificación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>
